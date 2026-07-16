@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 224 76% 48%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 210 40% 98%;
+    --accent-foreground: 222 47% 11%;
+    --success: 152 69% 28%;
+    --warning: 32 95% 38%;
+    --destructive: 0 70% 38%;
+    --border: 214 32% 91%;
+    --input: 214 32% 84%;
+    --ring: 217 91% 60%;
+    --radius: 0.5rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+@layer components {
+  .l-input {
+    @apply w-full rounded-md border border-input bg-card px-3 py-2 text-sm text-foreground shadow-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-ring;
+  }
+
+  .l-btn {
+    @apply inline-flex h-9 items-center justify-center gap-2 rounded-md px-3 text-sm font-medium shadow-sm outline-none transition-colors focus:ring-2 focus:ring-ring/50 disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .l-btn-primary {
+    @apply l-btn bg-primary text-primary-foreground hover:bg-primary-hover;
+  }
+
+  .l-btn-muted {
+    @apply l-btn border border-border bg-muted/60 text-foreground hover:bg-accent;
+  }
+
+  .l-panel {
+    @apply rounded-lg border border-border bg-card shadow-sm;
+  }
+}

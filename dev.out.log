@@ -1,0 +1,55 @@
+
+> autotranslate@0.1.0 dev
+> concurrently "npm:dev --workspace backend" "npm:dev --workspace frontend"
+
+[dev] 
+[dev] > autotranslate-backend@0.1.0 dev
+[dev] > tsx watch index.ts
+[dev] 
+[dev] 
+[dev] > autotranslate-frontend@0.1.0 dev
+[dev] > vite
+[dev] 
+[dev] 
+[dev]   [32m[1mVITE[22m v7.3.6[39m  [2mready in [0m[1m1202[22m[2m[0m ms[22m
+[dev] 
+[dev]   [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5173[22m/[39m
+[dev] [2m  [32m➜[39m  [1mNetwork[22m[2m: use [22m[1m--host[22m[2m to expose[22m
+[dev] AutoTranslate API on http://localhost:4000
+[dev] [2m9:05:19 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/index.css[22m
+[dev] [2m9:05:19 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/index.css[22m
+[dev] npm error Lifecycle script `dev` failed with error:
+[dev] npm error code 4294967295
+[dev] npm error path C:\Proyectos\autotranslate\frontend
+[dev] npm error workspace autotranslate-frontend@0.1.0
+[dev] npm error location C:\Proyectos\autotranslate\frontend
+[dev] npm error command failed
+[dev] npm error command C:\Windows\system32\cmd.exe /d /s /c vite
+[dev] npm run dev --workspace frontend exited with code 4294967295
+[dev] 9:57:29 PM [tsx] change in ./src\services\geminiTranslate.service.ts Rerunning...
+[dev] cnode:events:496
+[dev]       throw er; // Unhandled 'error' event
+[dev]       ^
+[dev] 
+[dev] Error: listen EADDRINUSE: address already in use :::4000
+[dev]     at Server.setupListenHandle [as _listen2] (node:net:1937:16)
+[dev]     at listenInCluster (node:net:1994:12)
+[dev]     at Server.listen (node:net:2099:7)
+[dev]     at Function.listen (C:\Proyectos\autotranslate\node_modules\express\lib\application.js:635:24)
+[dev]     at <anonymous> (C:\Proyectos\autotranslate\backend\index.ts:49:5)
+[dev]     at ModuleJob.run (node:internal/modules/esm/module_job:271:25)
+[dev]     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)
+[dev]     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5)
+[dev] Emitted 'error' event on Server instance at:
+[dev]     at emitErrorNT (node:net:1973:8)
+[dev]     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+[dev]   code: 'EADDRINUSE',
+[dev]   errno: -4091,
+[dev]   syscall: 'listen',
+[dev]   address: '::',
+[dev]   port: 4000
+[dev] }
+[dev] 
+[dev] Node.js v22.14.0
+[dev] 10:02:33 PM [tsx] change in ./src\services\geminiTranslate.service.ts Rerunning...
+[dev] cAutoTranslate API on http://localhost:4000
