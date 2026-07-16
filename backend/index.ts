@@ -56,8 +56,27 @@ app.get("/api/health", (_req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/translate", translateRoutes);
 
-const frontendDist = path.resolve(backendRoot, "../frontend/dist");
-if (fs.existsSync(frontendDist)) {
+function resolveFrontendDist(): string | null {
+  const candidates = [
+    path.resolve(backendRoot, "../frontend/dist"),
+    path.resolve(process.cwd(), "frontend/dist"),
+    path.resolve(process.cwd(), "../frontend/dist"),
+    path.resolve(__dirname, "../../frontend/dist"),
+  ];
+
+  for (const candidate of candidates) {
+    if (fs.existsSync(path.join(candidate, "index.html"))) {
+      return candidate;
+    }
+  }
+
+  console.warn("[static] frontend/dist not found. Checked:", candidates);
+  return null;
+}
+
+const frontendDist = resolveFrontendDist();
+if (frontendDist) {
+  console.info(`[static] serving frontend from ${frontendDist}`);
   app.use(express.static(frontendDist));
   app.get("*", (req, res, next) => {
     if (req.path.startsWith("/api/")) return next();
@@ -76,5 +95,6 @@ app.listen(port, () => {
 });
 
 export { app };
+
 
 
