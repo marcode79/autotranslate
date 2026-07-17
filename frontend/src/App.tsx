@@ -35,7 +35,7 @@ type AuthStatusResponse = {
   authenticated: boolean;
 };
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "";
 const CHUNK_OPTIONS = [3500, 5000, 8000, 12000];
 
 function blobToBase64(blob: Blob): Promise<string> {
@@ -588,3 +588,4 @@ function TranscriptColumn(props: {
     </div>
   );
 }
+
