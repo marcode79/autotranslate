@@ -1,22 +1,16 @@
 import { Router } from "express";
-import { isAuthenticated, login, logout } from "../auth/simpleAuth.js";
-
+import { requireUser, type AuthenticatedRequest } from "../auth/requireUser.js";
+import { adminClient } from "../lib/supabase.js";
 const router = Router();
-
-router.get("/me", (req, res) => {
-  res.json({ ok: true, authenticated: isAuthenticated(req) });
-});
-
-router.post("/login", (req, res, next) => {
+router.get("/me", requireUser, async (req, res, next) => {
   try {
-    return login(req, res);
-  } catch (err) {
-    next(err);
-  }
+    const auth = (req as AuthenticatedRequest).auth;
+    const db = adminClient();
+    await db.from("profiles").upsert({ id: auth.userId, email: auth.email }, { onConflict: "id" });
+    await db.from("subscriptions").upsert({ user_id: auth.userId, plan_id: "free" }, { onConflict: "user_id", ignoreDuplicates: true });
+    const { data, error } = await db.from("profiles").select("id,email,full_name,avatar_url,role,access_status,rejection_reason,approved_at").eq("id", auth.userId).single();
+    if (error) throw error;
+    res.json({ ok: true, user: data });
+  } catch (error) { next(error); }
 });
-
-router.post("/logout", (_req, res) => {
-  return logout(_req, res);
-});
-
 export default router;

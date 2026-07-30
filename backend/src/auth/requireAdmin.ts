@@ -1,0 +1,2 @@
+﻿import type {NextFunction,Request,Response} from "express";import{adminClient}from"../lib/supabase.js";import type{AuthenticatedRequest}from"./requireUser.js";
+export async function requireAdmin(req:Request,res:Response,next:NextFunction){try{const userId=(req as AuthenticatedRequest).auth.userId;const{data,error}=await adminClient().from("profiles").select("role").eq("id",userId).single();if(error||data?.role!=="admin")return res.status(403).json({ok:false,message:"Administrator access required."});next()}catch(e){next(e)}}

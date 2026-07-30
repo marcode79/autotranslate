@@ -10,24 +10,21 @@
 [dev] > autotranslate-frontend@0.1.0 dev
 [dev] > vite
 [dev] 
-[dev] 
-[dev]   [32m[1mVITE[22m v7.3.6[39m  [2mready in [0m[1m1202[22m[2m[0m ms[22m
-[dev] 
-[dev]   [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5173[22m/[39m
-[dev] [2m  [32m➜[39m  [1mNetwork[22m[2m: use [22m[1m--host[22m[2m to expose[22m
-[dev] AutoTranslate API on http://localhost:4000
-[dev] [2m9:05:19 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/index.css[22m
-[dev] [2m9:05:19 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/index.css[22m
+[dev] [31merror when starting dev server:
+[dev] Error: Port 5173 is already in use
+[dev]     at Server.onError$1 (file:///C:/Proyectos/autotranslate/node_modules/vite/dist/node/chunks/config.js:15006:28)
+[dev]     at Server.emit (node:events:518:28)
+[dev]     at emitErrorNT (node:net:1973:8)
+[dev]     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)[39m
 [dev] npm error Lifecycle script `dev` failed with error:
-[dev] npm error code 4294967295
+[dev] npm error code 1
 [dev] npm error path C:\Proyectos\autotranslate\frontend
 [dev] npm error workspace autotranslate-frontend@0.1.0
 [dev] npm error location C:\Proyectos\autotranslate\frontend
 [dev] npm error command failed
 [dev] npm error command C:\Windows\system32\cmd.exe /d /s /c vite
-[dev] npm run dev --workspace frontend exited with code 4294967295
-[dev] 9:57:29 PM [tsx] change in ./src\services\geminiTranslate.service.ts Rerunning...
-[dev] cnode:events:496
+[dev] npm run dev --workspace frontend exited with code 1
+[dev] node:events:496
 [dev]       throw er; // Unhandled 'error' event
 [dev]       ^
 [dev] 
@@ -36,7 +33,7 @@
 [dev]     at listenInCluster (node:net:1994:12)
 [dev]     at Server.listen (node:net:2099:7)
 [dev]     at Function.listen (C:\Proyectos\autotranslate\node_modules\express\lib\application.js:635:24)
-[dev]     at <anonymous> (C:\Proyectos\autotranslate\backend\index.ts:49:5)
+[dev]     at <anonymous> (C:\Proyectos\autotranslate\backend\index.ts:13:5)
 [dev]     at ModuleJob.run (node:internal/modules/esm/module_job:271:25)
 [dev]     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)
 [dev]     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5)
@@ -51,5 +48,299 @@
 [dev] }
 [dev] 
 [dev] Node.js v22.14.0
-[dev] 10:02:33 PM [tsx] change in ./src\services\geminiTranslate.service.ts Rerunning...
+[dev] 10:11:56 PM [tsx] change in ./src\routes\conversations.routes.ts Rerunning...
 [dev] cAutoTranslate API on http://localhost:4000
+[dev] 10:12:30 PM [tsx] change in ./index.ts Restarting...
+[dev] cnode:events:496
+[dev]       throw er; // Unhandled 'error' event
+[dev]       ^
+[dev] 
+[dev] Error: listen EADDRINUSE: address already in use :::4000
+[dev]     at Server.setupListenHandle [as _listen2] (node:net:1937:16)
+[dev]     at listenInCluster (node:net:1994:12)
+[dev]     at Server.listen (node:net:2099:7)
+[dev]     at Function.listen (C:\Proyectos\autotranslate\node_modules\express\lib\application.js:635:24)
+[dev]     at <anonymous> (C:\Proyectos\autotranslate\backend\index.ts:13:5)
+[dev]     at ModuleJob.run (node:internal/modules/esm/module_job:271:25)
+[dev]     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)
+[dev]     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5)
+[dev] Emitted 'error' event on Server instance at:
+[dev]     at emitErrorNT (node:net:1973:8)
+[dev]     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+[dev]   code: 'EADDRINUSE',
+[dev]   errno: -4091,
+[dev]   syscall: 'listen',
+[dev]   address: '::',
+[dev]   port: 4000
+[dev] }
+[dev] 
+[dev] Node.js v22.14.0
+[dev] 10:15:25 PM [tsx] unlink in ./..\node_modules\body-parser\lib\read.js Rerunning...
+[dev] c10:15:28 PM [tsx] change in ./..\node_modules\body-parser\lib\types\urlencoded.js Restarting...
+[dev] cAutoTranslate API on http://localhost:4000
+[dev] 10:22:06 PM [tsx] change in ./src\routes\admin.routes.ts Restarting...
+[dev] cnode:events:496
+[dev]       throw er; // Unhandled 'error' event
+[dev]       ^
+[dev] 
+[dev] Error: listen EADDRINUSE: address already in use :::4000
+[dev]     at Server.setupListenHandle [as _listen2] (node:net:1937:16)
+[dev]     at listenInCluster (node:net:1994:12)
+[dev]     at Server.listen (node:net:2099:7)
+[dev]     at Function.listen (C:\Proyectos\autotranslate\node_modules\express\lib\application.js:635:24)
+[dev]     at <anonymous> (C:\Proyectos\autotranslate\backend\index.ts:13:5)
+[dev]     at ModuleJob.run (node:internal/modules/esm/module_job:271:25)
+[dev]     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)
+[dev]     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5)
+[dev] Emitted 'error' event on Server instance at:
+[dev]     at emitErrorNT (node:net:1973:8)
+[dev]     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+[dev]   code: 'EADDRINUSE',
+[dev]   errno: -4091,
+[dev]   syscall: 'listen',
+[dev]   address: '::',
+[dev]   port: 4000
+[dev] }
+[dev] 
+[dev] Node.js v22.14.0
+[dev] 10:22:40 PM [tsx] change in ./index.ts Rerunning...
+[dev] cAutoTranslate API on http://localhost:4000
+[dev] {"type":"request","requestId":"12f88367-0d79-4380-a068-5716ad8b34cf","method":"GET","path":"/656a22cb-5fab-4b57-a1e3-eebca6f45742","status":200,"durationMs":1129}
+[dev] 10:24:18 PM [tsx] change in ./src\routes\admin.routes.ts Restarting...
+[dev] cAutoTranslate API on http://localhost:4000
+[dev] 10:32:11 PM [tsx] change in ./src\services\quota.service.ts Restarting...
+[dev] cAutoTranslate API on http://localhost:4000
+[dev] 10:32:32 PM [tsx] change in ./index.ts Restarting...
+[dev] cC:\Proyectos\autotranslate\backend\src\routes\conversations.routes.ts:3
+[dev] router.post("/",requireApprovedUser,async(req,res,next)=>{try{const userId=(req as AuthenticatedRequest).auth.userId,{sourceLanguage="auto",targetLanguage="es"}=req.body??{};const{data,error}=await adminClient().from("conversations").insert({user_id:userId,source_language:sourceLanguage,target_language:targetLanguage}).select().single();if(error)throw error;res.status(201).json({ok:true,conversation:data})}catch(e){next(e)}});
+[dev]                 ^
+[dev] 
+[dev] 
+[dev] ReferenceError: requireApprovedUser is not defined
+[dev]     at <anonymous> (C:\Proyectos\autotranslate\backend\src\routes\conversations.routes.ts:3:17)
+[dev]     at ModuleJob.run (node:internal/modules/esm/module_job:271:25)
+[dev]     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)
+[dev]     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5)
+[dev] 
+[dev] Node.js v22.14.0
+[dev] 10:33:01 PM [tsx] change in ./src\routes\conversations.routes.ts Rerunning...
+[dev] cAutoTranslate API on http://localhost:4000
+[dev] 10:35:04 PM [tsx] change in ./src\routes\admin.routes.ts Restarting...
+[dev] cAutoTranslate API on http://localhost:4000
+[dev] 10:36:24 PM [tsx] change in ./src\routes\billing.routes.ts Restarting...
+[dev] cAutoTranslate API on http://localhost:4000
+[dev] 10:37:36 PM [tsx] change in ./src\routes\translate.routes.ts Restarting...
+[dev] cnode:events:496
+[dev]       throw er; // Unhandled 'error' event
+[dev]       ^
+[dev] 
+[dev] Error: listen EADDRINUSE: address already in use :::4000
+[dev]     at Server.setupListenHandle [as _listen2] (node:net:1937:16)
+[dev]     at listenInCluster (node:net:1994:12)
+[dev]     at Server.listen (node:net:2099:7)
+[dev]     at Function.listen (C:\Proyectos\autotranslate\node_modules\express\lib\application.js:635:24)
+[dev]     at <anonymous> (C:\Proyectos\autotranslate\backend\index.ts:13:5)
+[dev]     at ModuleJob.run (node:internal/modules/esm/module_job:271:25)
+[dev]     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)
+[dev]     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5)
+[dev] Emitted 'error' event on Server instance at:
+[dev]     at emitErrorNT (node:net:1973:8)
+[dev]     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+[dev]   code: 'EADDRINUSE',
+[dev]   errno: -4091,
+[dev]   syscall: 'listen',
+[dev]   address: '::',
+[dev]   port: 4000
+[dev] }
+[dev] 
+[dev] Node.js v22.14.0
+[dev] 11:02:45 PM [tsx] change in ./index.ts Rerunning...
+[dev] cnode:events:496
+[dev]       throw er; // Unhandled 'error' event
+[dev]       ^
+[dev] 
+[dev] Error: listen EADDRINUSE: address already in use :::4000
+[dev]     at Server.setupListenHandle [as _listen2] (node:net:1937:16)
+[dev]     at listenInCluster (node:net:1994:12)
+[dev]     at Server.listen (node:net:2099:7)
+[dev]     at <anonymous> (C:\Proyectos\autotranslate\backend\index.ts:13:70)
+[dev]     at ModuleJob.run (node:internal/modules/esm/module_job:271:25)
+[dev]     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)
+[dev]     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5)
+[dev] Emitted 'error' event on WebSocketServer instance at:
+[dev]     at Server.emit (node:events:518:28)
+[dev]     at emitErrorNT (node:net:1973:8)
+[dev]     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+[dev]   code: 'EADDRINUSE',
+[dev]   errno: -4091,
+[dev]   syscall: 'listen',
+[dev]   address: '::',
+[dev]   port: 4000
+[dev] }
+[dev] 
+[dev] Node.js v22.14.0
+[dev] 11:05:56 PM [tsx] change in ./src\live\liveGateway.ts Rerunning...
+[dev] cAutoTranslate API on http://localhost:4000
+[dev] {"type":"request","requestId":"a05898c5-910e-4cea-baff-c89647ad9b8f","method":"GET","path":"/api/health","status":200,"durationMs":21}
+[dev] 11:08:38 PM [tsx] change in ./src\routes\conversations.routes.ts Restarting...
+[dev] cAutoTranslate API on http://localhost:4000
+[dev] 11:09:03 PM [tsx] change in ./src\routes\conversations.routes.ts Restarting...
+[dev] cnode:events:496
+[dev]       throw er; // Unhandled 'error' event
+[dev]       ^
+[dev] 
+[dev] Error: listen EADDRINUSE: address already in use :::4000
+[dev]     at Server.setupListenHandle [as _listen2] (node:net:1937:16)
+[dev]     at listenInCluster (node:net:1994:12)
+[dev]     at Server.listen (node:net:2099:7)
+[dev]     at <anonymous> (C:\Proyectos\autotranslate\backend\index.ts:13:70)
+[dev]     at ModuleJob.run (node:internal/modules/esm/module_job:271:25)
+[dev]     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)
+[dev]     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5)
+[dev] Emitted 'error' event on WebSocketServer instance at:
+[dev]     at Server.emit (node:events:518:28)
+[dev]     at emitErrorNT (node:net:1973:8)
+[dev]     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+[dev]   code: 'EADDRINUSE',
+[dev]   errno: -4091,
+[dev]   syscall: 'listen',
+[dev]   address: '::',
+[dev]   port: 4000
+[dev] }
+[dev] 
+[dev] Node.js v22.14.0
+[dev] 11:15:02 PM [tsx] change in ./index.ts Rerunning...
+[dev] cnode:events:496
+[dev]       throw er; // Unhandled 'error' event
+[dev]       ^
+[dev] 
+[dev] Error: listen EADDRINUSE: address already in use :::4000
+[dev]     at Server.setupListenHandle [as _listen2] (node:net:1937:16)
+[dev]     at listenInCluster (node:net:1994:12)
+[dev]     at Server.listen (node:net:2099:7)
+[dev]     at <anonymous> (C:\Proyectos\autotranslate\backend\index.ts:13:70)
+[dev]     at ModuleJob.run (node:internal/modules/esm/module_job:271:25)
+[dev]     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)
+[dev]     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5)
+[dev] Emitted 'error' event on WebSocketServer instance at:
+[dev]     at Server.emit (node:events:518:28)
+[dev]     at emitErrorNT (node:net:1973:8)
+[dev]     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+[dev]   code: 'EADDRINUSE',
+[dev]   errno: -4091,
+[dev]   syscall: 'listen',
+[dev]   address: '::',
+[dev]   port: 4000
+[dev] }
+[dev] 
+[dev] Node.js v22.14.0
+[dev] 11:18:17 PM [tsx] change in ./src\live\liveGateway.ts Rerunning...
+[dev] cAutoTranslate API on http://localhost:4000
+[dev] {"type":"request","requestId":"f739e109-83a0-4cae-990e-93cb64bde8b6","method":"GET","path":"/api/health","status":200,"durationMs":19}
+[dev] {"type":"request","requestId":"8ab1d94c-7409-4073-bcf8-9f07aa80cab4","method":"GET","path":"/","status":200,"durationMs":1154}
+[dev] {"type":"request","requestId":"0ca46a83-2f79-49ca-a5b2-33e802f60dc6","method":"GET","path":"/summary","status":200,"durationMs":1016}
+[dev] {"type":"request","requestId":"6d9b93e2-3c52-446b-85e4-eb46f78d9e26","method":"GET","path":"/me","status":304,"durationMs":1243}
+[dev] {"type":"request","requestId":"0b5e0b25-8287-4d0c-8347-fd7fe85cd9c5","method":"GET","path":"/config","status":304,"durationMs":446}
+[dev] {"type":"request","requestId":"d1c7c187-3df0-4453-8593-a5165e610dbe","method":"GET","path":"/config","status":304,"durationMs":299}
+[dev] {"type":"request","requestId":"b06ec166-930d-4880-9fc4-5cf082dde178","method":"POST","path":"/","status":201,"durationMs":674}
+[dev] {"type":"request","requestId":"fe10b23a-6e03-4cb0-9f60-a3614ca4cdaf","method":"GET","path":"/","status":200,"durationMs":479}
+[dev] {"type":"request","requestId":"f3f413af-baad-4584-93bc-00da31bea01e","method":"GET","path":"/summary","status":200,"durationMs":651}
+[dev] {"type":"request","requestId":"fd25b2ab-e6f3-460b-b70a-8a01ff740661","method":"GET","path":"/me","status":304,"durationMs":749}
+[dev] {"type":"request","requestId":"0fa4a4ef-a6eb-4a3c-b80c-72b5b724b768","method":"POST","path":"/","status":201,"durationMs":575}
+[dev] 11:25:11 PM [tsx] change in ./src\live\liveGateway.ts Restarting...
+[dev] cAutoTranslate API on http://localhost:4000
+[dev] {"type":"request","requestId":"8013f0a1-3b72-4241-9000-85b228ff9588","method":"POST","path":"/","status":201,"durationMs":2247}
+[dev] {"type":"request","requestId":"c7e02886-1c21-46ea-a2a2-a5597e50edbf","method":"GET","path":"/","status":200,"durationMs":624}
+[dev] {"type":"request","requestId":"1e66af2d-8d1d-4cda-9e43-3e3f094b1b83","method":"GET","path":"/summary","status":200,"durationMs":739}
+[dev] {"type":"request","requestId":"0d0e1b8f-aff1-4568-8707-e261d7499ca9","method":"GET","path":"/me","status":304,"durationMs":940}
+[dev] {"type":"request","requestId":"d1a914bd-ae4f-47b9-ae73-bdf77de368a2","method":"GET","path":"/","status":304,"durationMs":326}
+[dev] {"type":"request","requestId":"65732330-4ad1-49e8-8d24-342846e9815a","method":"GET","path":"/summary","status":304,"durationMs":460}
+[dev] {"type":"request","requestId":"de37295c-53ac-4cf8-8021-907e30006245","method":"GET","path":"/me","status":304,"durationMs":743}
+[dev] {"type":"request","requestId":"d1d9368c-eee8-4d9e-8f22-89e2294a3a1d","method":"POST","path":"/","status":201,"durationMs":678}
+[dev] {"type":"request","requestId":"9ced32ed-db67-430a-99d4-0bf994f8150d","method":"POST","path":"/audio","status":200,"durationMs":4844}
+[dev] {"type":"request","requestId":"47f99abc-34cd-42e8-a9b7-e4fef5ec1c07","method":"POST","path":"/audio","status":200,"durationMs":3703}
+[dev] {"type":"request","requestId":"43306e07-6568-427d-9743-11a9c4082b05","method":"POST","path":"/audio","status":200,"durationMs":3509}
+[dev] {"type":"request","requestId":"67f79f92-1371-47bc-8c23-3f582c396e11","method":"POST","path":"/audio","status":200,"durationMs":4888}
+[dev] {"type":"request","requestId":"edc8fd3f-d69c-4c97-8e59-8bc7df4a614a","method":"POST","path":"/audio","status":200,"durationMs":3724}
+[dev] {"type":"request","requestId":"6ef76dd1-76ca-4873-aba2-60e7232d4bae","method":"POST","path":"/audio","status":200,"durationMs":3444}
+[dev] {"type":"request","requestId":"a9aaf7f3-3abc-4605-9230-be67987cf98e","method":"POST","path":"/audio","status":200,"durationMs":4055}
+[dev] {"type":"request","requestId":"42b3d0a0-9589-4148-858b-4013d325b42d","method":"POST","path":"/audio","status":200,"durationMs":3821}
+[dev] {"type":"request","requestId":"e17c8d03-9eff-4e4e-bfa6-5d774857e4fb","method":"POST","path":"/audio","status":200,"durationMs":3396}
+[dev] {"type":"request","requestId":"e802bbb0-2677-49f6-9b49-846d6696c520","method":"POST","path":"/audio","status":200,"durationMs":3576}
+[dev] {"type":"request","requestId":"eefc0153-3e20-4fc8-bade-0c65e4417c16","method":"POST","path":"/audio","status":200,"durationMs":3374}
+[dev] {"type":"request","requestId":"f62f5a77-1036-4d3c-9cc0-b8fcafbed029","method":"POST","path":"/audio","status":200,"durationMs":3633}
+[dev] {"type":"request","requestId":"9c55c2b6-dda9-4e85-9ce2-136fc000c180","method":"POST","path":"/audio","status":200,"durationMs":3646}
+[dev] 11:38:43 PM [tsx] change in ./src\services\quota.service.ts Restarting...
+[dev] cAutoTranslate API on http://localhost:4000
+[dev] {"type":"request","requestId":"2e8510e0-613c-4e45-a129-dab20bf5dca3","method":"POST","path":"/audio","status":200,"durationMs":6557}
+[dev] {"type":"request","requestId":"003832fc-274a-4b11-ac01-4bfb58269fbd","method":"POST","path":"/audio","status":200,"durationMs":3839}
+[dev] {"type":"request","requestId":"43a00bdd-cc25-4fe4-aaf0-bac491d40737","method":"POST","path":"/audio","status":200,"durationMs":3782}
+[dev] {"type":"request","requestId":"e34bb5bc-4014-4f2a-a989-c520842587a2","method":"POST","path":"/audio","status":200,"durationMs":5172}
+[dev] {"type":"request","requestId":"67f5741d-1ac2-43a4-9698-f9f8ca3aa3f6","method":"POST","path":"/audio","status":200,"durationMs":6543}
+[dev] {"type":"request","requestId":"5a543817-6850-44a4-84c6-f9399791ae53","method":"POST","path":"/audio","status":200,"durationMs":3231}
+[dev] {"type":"request","requestId":"dcc00a54-5ce1-4f4f-a2b3-bd872b5c823e","method":"POST","path":"/audio","status":200,"durationMs":3323}
+[dev] {"type":"request","requestId":"3c891557-efc4-4d21-a97e-89c713731d6f","method":"POST","path":"/audio","status":200,"durationMs":3821}
+[dev] {"type":"request","requestId":"0c76b575-df9b-411c-9a53-9a0099a87a69","method":"POST","path":"/audio","status":200,"durationMs":3439}
+[dev] {"type":"request","requestId":"8f3ffb7a-1440-447a-bfbb-9a9905ce6e33","method":"POST","path":"/audio","status":200,"durationMs":3899}
+[dev] {"type":"request","requestId":"493ad6cf-f511-445e-ae23-8b37264cf3f5","method":"POST","path":"/audio","status":200,"durationMs":3260}
+[dev] {"type":"request","requestId":"aa685d82-6937-4141-a1e4-24c4204afb4c","method":"POST","path":"/audio","status":200,"durationMs":3186}
+[dev] {"type":"request","requestId":"ffec9207-0ec2-453d-aac2-c0844d516712","method":"GET","path":"/","status":200,"durationMs":313}
+[dev] {"type":"request","requestId":"95068d5b-b387-4975-a395-c5004dda1d5a","method":"GET","path":"/summary","status":200,"durationMs":648}
+[dev] {"type":"request","requestId":"b1fcd5f4-2ef5-4be2-81f0-bf55d71565d3","method":"GET","path":"/me","status":304,"durationMs":720}
+[dev] {"type":"request","requestId":"3bd36d06-1033-4530-9fea-63bee249aecd","method":"POST","path":"/audio","status":200,"durationMs":3002}
+[dev] {"type":"request","requestId":"9afb7d63-fe3c-496e-8d5b-22a9734a2e8e","method":"POST","path":"/audio","status":200,"durationMs":3467}
+[dev] {"type":"request","requestId":"b3218cf9-a072-4134-be03-1cd87a7d300d","method":"PATCH","path":"/1194c024-1811-4ee8-8e30-b0d24c0fe848","status":200,"durationMs":357}
+[dev] {"type":"request","requestId":"70871b1d-3525-43c3-9b41-cce628e46db6","method":"GET","path":"/","status":200,"durationMs":291}
+[dev] {"type":"request","requestId":"d54b63d6-9f9b-4210-884c-8ebdc5aadeea","method":"GET","path":"/summary","status":200,"durationMs":437}
+[dev] {"type":"request","requestId":"d36cf2db-845c-42a9-a6a3-c0fb884cb407","method":"GET","path":"/me","status":304,"durationMs":737}
+[dev] {"type":"request","requestId":"e6e5e8c8-0b86-4a2b-8404-d79d7ff91cbc","method":"POST","path":"/audio","status":200,"durationMs":3440}
+[dev] {"type":"request","requestId":"e01a8a58-36bd-4c34-9e10-0de75b79f28f","method":"POST","path":"/audio","status":200,"durationMs":6233}
+[dev] {"type":"request","requestId":"8f6b5feb-0a8a-49aa-8b48-31067f8e9cf3","method":"PATCH","path":"/1194c024-1811-4ee8-8e30-b0d24c0fe848","status":200,"durationMs":423}
+[dev] {"type":"request","requestId":"21249af7-c3fe-4c74-82b1-243529537f35","method":"GET","path":"/","status":200,"durationMs":304}
+[dev] {"type":"request","requestId":"bebff2e1-8591-4332-b3c9-60cc82e8764e","method":"GET","path":"/summary","status":200,"durationMs":580}
+[dev] {"type":"request","requestId":"4b410674-52bd-455a-b8a2-5387fc072038","method":"GET","path":"/me","status":304,"durationMs":764}
+[dev] {"type":"request","requestId":"dec7951d-c5db-4ffa-890a-d456c5b61bba","method":"POST","path":"/audio","status":200,"durationMs":19280}
+[dev] {"type":"request","requestId":"e93e49d2-1eee-4b55-899c-0015c10e0d78","method":"POST","path":"/audio","status":200,"durationMs":3406}
+[dev] {"type":"request","requestId":"08084e03-eaed-4c5c-a034-cb38c98a62a8","method":"POST","path":"/audio","status":401,"durationMs":206}
+[dev] {"type":"request","requestId":"7a6ffa94-39ed-4af7-bc4a-e49940dead92","method":"POST","path":"/audio","status":401,"durationMs":162}
+[dev] {"type":"request","requestId":"803eb5a9-c6e1-4336-8045-2cb44a880617","method":"POST","path":"/audio","status":401,"durationMs":149}
+[dev] {"type":"request","requestId":"afe0101b-de0a-43d4-8998-74c817df2264","method":"GET","path":"/status","status":200,"durationMs":651}
+[dev] {"type":"request","requestId":"f9548559-0ef5-4806-b57f-3b2b9b6d1571","method":"GET","path":"/status","status":304,"durationMs":444}
+[dev] {"type":"request","requestId":"f60f4633-a75e-466a-acac-baf683f6b200","method":"GET","path":"/plans","status":304,"durationMs":529}
+[dev] {"type":"request","requestId":"a6871b87-7ccc-4973-8474-ef7cad7ec895","method":"GET","path":"/users","status":200,"durationMs":594}
+[dev] {"type":"request","requestId":"9264307a-4af2-4f10-bfe4-d5cf62fdbc24","method":"GET","path":"/summary","status":200,"durationMs":631}
+[dev] {"type":"request","requestId":"2d728100-3eee-425c-90cd-64d76b4ca97d","method":"GET","path":"/daily","status":200,"durationMs":804}
+[dev] {"type":"request","requestId":"9c63caa5-9a1c-4a42-ac41-7b1f31da4237","method":"GET","path":"/invites","status":304,"durationMs":898}
+[dev] {"type":"request","requestId":"bd72fb3f-dd41-4cf8-8236-9cbbaba72d5a","method":"GET","path":"/plans","status":304,"durationMs":460}
+[dev] {"type":"request","requestId":"313f1e26-02a5-4d82-afb5-b684377d0469","method":"GET","path":"/requests","status":304,"durationMs":1015}
+[dev] {"type":"request","requestId":"aa9f23d1-03a1-4812-be5d-81932af26bcf","method":"GET","path":"/users","status":304,"durationMs":435}
+[dev] {"type":"request","requestId":"6d2701ef-84fd-41e6-8d2a-6c0eb4b50ee0","method":"GET","path":"/daily","status":304,"durationMs":460}
+[dev] {"type":"request","requestId":"57551f48-c8fe-4302-ad2a-1ceac2e78342","method":"GET","path":"/summary","status":304,"durationMs":731}
+[dev] {"type":"request","requestId":"67ac5a5f-5efd-49f1-92e8-59671e7b0206","method":"GET","path":"/invites","status":304,"durationMs":724}
+[dev] {"type":"request","requestId":"82d1551c-2393-43a9-af5b-950f0d61cba5","method":"GET","path":"/requests","status":304,"durationMs":729}
+[dev] 8:30:07 AM [tsx] change in ./index.ts Restarting...
+[dev] c8:30:09 AM [tsx] change in ./src\routes\conversations.routes.ts Restarting...
+[dev] cnode:events:496
+[dev]       throw er; // Unhandled 'error' event
+[dev]       ^
+[dev] 
+[dev] Error: listen EADDRINUSE: address already in use :::4000
+[dev]     at Server.setupListenHandle [as _listen2] (node:net:1937:16)
+[dev]     at listenInCluster (node:net:1994:12)
+[dev]     at Server.listen (node:net:2099:7)
+[dev]     at <anonymous> (C:\Proyectos\autotranslate\backend\index.ts:13:70)
+[dev]     at ModuleJob.run (node:internal/modules/esm/module_job:271:25)
+[dev]     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)
+[dev]     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5)
+[dev] Emitted 'error' event on WebSocketServer instance at:
+[dev]     at Server.emit (node:events:518:28)
+[dev]     at emitErrorNT (node:net:1973:8)
+[dev]     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+[dev]   code: 'EADDRINUSE',
+[dev]   errno: -4091,
+[dev]   syscall: 'listen',
+[dev]   address: '::',
+[dev]   port: 4000
+[dev] }
+[dev] 
+[dev] Node.js v22.14.0

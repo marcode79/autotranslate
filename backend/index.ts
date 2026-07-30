@@ -2,99 +2,15 @@ import path from "node:path";
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 import dotenv from "dotenv";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const backendRoot = fs.existsSync(path.resolve(__dirname, "package.json"))
-  ? __dirname
-  : path.resolve(__dirname, "..");
-dotenv.config({
-  path: path.resolve(backendRoot, ".env"),
-  override: process.env.NODE_ENV !== "production",
-});
-
-import express from "express";
-import cors from "cors";
-import helmet from "helmet";
-import authRoutes from "./src/routes/auth.routes.js";
-import translateRoutes from "./src/routes/translate.routes.js";
-
-const app = express();
-const port = Number(process.env.PORT || 4000);
-const requestBodyLimit = process.env.REQUEST_BODY_LIMIT?.trim() || "18mb";
-const frontendUrl = process.env.FRONTEND_URL?.trim() || "http://localhost:5173";
-const allowedOrigins = new Set([
-  frontendUrl,
-  "http://localhost:5173",
-  "http://127.0.0.1:5173",
-  "http://localhost:5174",
-  "http://127.0.0.1:5174",
-]);
-
-app.use(
-  helmet({
-    contentSecurityPolicy: false,
-    crossOriginResourcePolicy: { policy: "cross-origin" },
-  })
-);
-
-app.use(
-  cors({
-    origin(origin, cb) {
-      if (!origin || allowedOrigins.has(origin)) return cb(null, true);
-      return cb(new Error("Not allowed by CORS"));
-    },
-    credentials: true,
-  })
-);
-
-app.use(express.json({ limit: requestBodyLimit }));
-
-app.get("/api/health", (_req, res) => {
-  res.json({ ok: true, service: "autotranslate-backend" });
-});
-
-app.use("/api/auth", authRoutes);
-app.use("/api/translate", translateRoutes);
-
-function resolveFrontendDist(): string | null {
-  const candidates = [
-    path.resolve(backendRoot, "../frontend/dist"),
-    path.resolve(process.cwd(), "frontend/dist"),
-    path.resolve(process.cwd(), "../frontend/dist"),
-    path.resolve(__dirname, "../../frontend/dist"),
-  ];
-
-  for (const candidate of candidates) {
-    if (fs.existsSync(path.join(candidate, "index.html"))) {
-      return candidate;
-    }
-  }
-
-  console.warn("[static] frontend/dist not found. Checked:", candidates);
-  return null;
-}
-
-const frontendDist = resolveFrontendDist();
-if (frontendDist) {
-  console.info(`[static] serving frontend from ${frontendDist}`);
-  app.use(express.static(frontendDist));
-  app.get("*", (req, res, next) => {
-    if (req.path.startsWith("/api/")) return next();
-    return res.sendFile(path.join(frontendDist, "index.html"));
-  });
-}
-
-app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  const message = err instanceof Error ? err.message : "Internal server error";
-  const status = message.includes("GEMINI_API_KEY") ? 500 : 400;
-  res.status(status).json({ ok: false, message });
-});
-
-app.listen(port, () => {
-  console.log(`AutoTranslate API on http://localhost:${port}`);
-});
-
-export { app };
+const __dirname=path.dirname(fileURLToPath(import.meta.url));const backendRoot=fs.existsSync(path.resolve(__dirname,"package.json"))?__dirname:path.resolve(__dirname,"..");dotenv.config({path:path.resolve(backendRoot,".env"),override:process.env.NODE_ENV!=="production"});
+import http from "node:http";import express from "express";import cors from "cors";import helmet from "helmet";import authRoutes from "./src/routes/auth.routes.js";import translateRoutes from "./src/routes/translate.routes.js";import conversationsRoutes from "./src/routes/conversations.routes.js";import usageRoutes from "./src/routes/usage.routes.js";import billingRoutes,{stripeWebhook} from "./src/routes/billing.routes.js";import adminRoutes from "./src/routes/admin.routes.js";import accountRoutes from "./src/routes/account.routes.js";import accessRoutes from "./src/routes/access.routes.js";import adminAccessRoutes from "./src/routes/adminAccess.routes.js";import liveRoutes from "./src/routes/liveConfig.routes.js";import {attachLiveGateway} from "./src/live/liveGateway.js";import {apiLimiter,billingLimiter,requestContext,translationLimiter} from "./src/middleware/security.js";
+const app=express();app.set("trust proxy",1);const port=Number(process.env.PORT||4000),frontendUrl=process.env.FRONTEND_URL?.trim()||"http://localhost:5173";const allowed=new Set([frontendUrl,"http://localhost:5173","http://127.0.0.1:5173","http://localhost:5174","http://127.0.0.1:5174"]);
+app.use(requestContext);app.use(helmet({contentSecurityPolicy:false,crossOriginResourcePolicy:{policy:"cross-origin"}}));app.use(cors({origin(origin,cb){return !origin||allowed.has(origin)?cb(null,true):cb(new Error("Not allowed by CORS"))},credentials:true}));
+app.post("/api/billing/webhook",express.raw({type:"application/json"}),stripeWebhook);app.use(express.json({limit:process.env.REQUEST_BODY_LIMIT?.trim()||"18mb"}));app.use("/api",apiLimiter);
+app.get("/api/health",(_q,r)=>r.json({ok:true,service:"autotranslate-backend"}));app.use("/api/auth",authRoutes);app.use("/api/translate",translationLimiter,translateRoutes);app.use("/api/conversations",conversationsRoutes);app.use("/api/usage",usageRoutes);app.use("/api/billing",billingLimiter,billingRoutes);app.use("/api/admin",adminRoutes);app.use("/api/account",accountRoutes);app.use("/api/access",accessRoutes);app.use("/api/admin/access",adminAccessRoutes);app.use("/api/live",liveRoutes);
+function frontendDist(){for(const p of [path.resolve(backendRoot,"../frontend/dist"),path.resolve(process.cwd(),"frontend/dist"),path.resolve(__dirname,"../../frontend/dist")])if(fs.existsSync(path.join(p,"index.html")))return p;return null}const dist=frontendDist();if(dist){app.use(express.static(dist));app.get("*",(req,res,next)=>req.path.startsWith("/api/")?next():res.sendFile(path.join(dist,"index.html")))}
+app.use((err:unknown,_req:express.Request,res:express.Response,_next:express.NextFunction)=>{const value=err&&typeof err==="object"?err as Record<string,unknown>:{};const raw=err instanceof Error?err.message:typeof value.message==="string"?value.message:"Internal server error";const code=typeof value.code==="string"?value.code:undefined;const message=code==="42703"&&raw.includes("translation_mode")?"Falta aplicar la migración 005_live_translation.sql en Supabase.":raw;console.error({message:raw,code,details:value.details,hint:value.hint});res.status(raw.includes("Missing ")||code==="42703"?500:400).json({ok:false,message,code})});
+const server=http.createServer(app);attachLiveGateway(server);server.listen(port,()=>console.log(`AutoTranslate API on http://localhost:${port}`));export{app,server};
 
 
 
