@@ -120,6 +120,8 @@ Ejecuta después de `003_production_hardening.sql`:
 
 La migración conserva aprobadas todas las cuentas existentes. A partir de ese momento, cada cuenta nueva queda en `pending` y no puede crear conversaciones, traducir ni iniciar Checkout hasta que un administrador la apruebe o canjee una invitación válida.
 
+Ejecuta también `backend/supabase/migrations/006_admin_unlimited_usage.sql` para que las cuentas con `role = 'admin'` no estén sujetas a los límites diarios, mensuales ni de costo del plan. Su consumo continúa registrándose normalmente en los contadores y reportes de uso.
+
 La vista **Administración → Control de acceso** permite aprobar, rechazar, suspender y reactivar cuentas. Las invitaciones son aleatorias, se almacenan únicamente como SHA-256, pueden limitarse a un correo, expiran y sólo pueden usarse una vez.
 
 ### Bot protection
