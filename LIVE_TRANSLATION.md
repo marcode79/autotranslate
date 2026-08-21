@@ -30,6 +30,11 @@ del plan, pero el costo monetario mostrado para Live queda en cero.
 Se recomienda usar auriculares para impedir que la voz traducida vuelva a entrar en la
 captura. El historial se consolida cuando termina la sesión.
 
+El backend habilita compresión de contexto y reanudación de sesión. Cuando Gemini envía
+`goAway` para rotar su WebSocket periódico, AutoTranslate conserva el identificador de
+reanudación, mantiene una cola corta de audio y continúa sin detener la captura del
+navegador. Los cierres recuperables se reintentan hasta cinco veces con espera incremental.
+
 ## Regreso seguro
 
 Para ocultar Live sin afectar el traductor estable:

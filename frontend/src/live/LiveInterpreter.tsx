@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Activity, Headphones, Mic, Pause, Play, Volume2, VolumeX } from "lucide-react";
+import { Activity, Check, Copy, Headphones, Mic, Pause, Play, Volume2, VolumeX } from "lucide-react";
 
 type Api = (path: string, init?: RequestInit) => Promise<any>;
 type Props = {
@@ -50,6 +50,7 @@ export function LiveInterpreter({ token, api, onFinished }: Props) {
   const [transcript, setTranscript] = useState("");
   const [translation, setTranslation] = useState("");
   const [seconds, setSeconds] = useState(0);
+  const [copied, setCopied] = useState(false);
   const socket = useRef<WebSocket | null>(null);
   const display = useRef<MediaStream | null>(null);
   const microphone = useRef<MediaStream | null>(null);
@@ -58,10 +59,14 @@ export function LiveInterpreter({ token, api, onFinished }: Props) {
   const nextPlayback = useRef(0);
   const startedAt = useRef(0);
   const clock = useRef<number | null>(null);
+  const copiedTimer = useRef<number | null>(null);
 
   useEffect(() => {
     api("/api/live/config").then(result => setAvailable(Boolean(result.enabled))).catch(() => setAvailable(false));
-    return () => stop(false);
+    return () => {
+      if (copiedTimer.current) clearTimeout(copiedTimer.current);
+      stop(false);
+    };
   }, []);
 
   function playPcm(encoded: string) {
@@ -181,6 +186,18 @@ export function LiveInterpreter({ token, api, onFinished }: Props) {
     if (refresh) window.setTimeout(onFinished, 500);
   }
 
+  async function copyChat() {
+    const content = [`Original\n${transcript || "—"}`, `Traducción\n${translation || "—"}`].join("\n\n");
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopied(true);
+      if (copiedTimer.current) clearTimeout(copiedTimer.current);
+      copiedTimer.current = window.setTimeout(() => setCopied(false), 2_000);
+    } catch {
+      setError("No se pudo copiar el chat al portapapeles.");
+    }
+  }
+
   if (available === null) return <div className="l-panel p-8 text-sm">Verificando disponibilidad de Live…</div>;
   if (!available) {
     return <div className="l-panel p-8"><h2 className="font-semibold">Intérprete Live no habilitado</h2><p className="mt-2 text-sm text-muted-foreground">Activa LIVE_TRANSLATION_ENABLED en el backend. Inicialmente puede limitarse a administradores.</p></div>;
@@ -191,9 +208,20 @@ export function LiveInterpreter({ token, api, onFinished }: Props) {
     {error && <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}
     <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
       <div><h1 className="text-xl font-semibold">Intérprete en tiempo real</h1><p className="text-sm text-muted-foreground">Motor independiente en versión preliminar. Recomendamos usar auriculares.</p></div>
-      {active
-        ? <button className="l-btn-muted" onClick={() => stop()}><Pause className="h-4 w-4"/>Finalizar</button>
-        : <button className="l-btn-primary" onClick={start}><Play className="h-4 w-4"/>Iniciar Live</button>}
+      <div className="flex gap-2">
+        <button
+          className="l-btn-muted px-3"
+          disabled={!transcript && !translation}
+          title={copied ? "Chat copiado" : "Copiar chat"}
+          aria-label={copied ? "Chat copiado" : "Copiar chat"}
+          onClick={copyChat}
+        >
+          {copied ? <Check className="h-4 w-4 text-green-600"/> : <Copy className="h-4 w-4"/>}
+        </button>
+        {active
+          ? <button className="l-btn-muted" onClick={() => stop()}><Pause className="h-4 w-4"/>Finalizar</button>
+          : <button className="l-btn-primary" onClick={start}><Play className="h-4 w-4"/>Iniciar Live</button>}
+      </div>
     </div>
     <div className="grid gap-4 lg:grid-cols-[280px_1fr]">
       <aside className="l-panel h-fit space-y-4 p-4">

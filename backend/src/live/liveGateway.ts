@@ -28,6 +28,8 @@ const activeUsers = new Set<string>();
 const MODEL = process.env.GEMINI_LIVE_MODEL?.trim() || "gemini-3.5-live-translate-preview";
 const GOOGLE_WS =
   "wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent";
+const MAX_UPSTREAM_RECONNECTS = 5;
+const MAX_BUFFERED_AUDIO_CHUNKS = 30;
 
 const isEnabled = () => process.env.LIVE_TRANSLATION_ENABLED?.trim().toLowerCase() === "true";
 
@@ -139,12 +141,20 @@ export function attachLiveGateway(server: HttpServer) {
     let upstream: WebSocket | undefined;
     let state: LiveState | undefined;
     let timer: NodeJS.Timeout | undefined;
+    let reconnectTimer: NodeJS.Timeout | undefined;
     let closing = false;
+    let upstreamGeneration = 0;
+    let reconnectAttempts = 0;
+    let resumptionHandle: string | undefined;
+    let clientReady = false;
+    let upstreamReady = false;
+    const pendingAudio: Buffer[] = [];
 
     const close = async () => {
       if (closing) return;
       closing = true;
       if (timer) clearInterval(timer);
+      if (reconnectTimer) clearTimeout(reconnectTimer);
       upstream?.close();
       if (state) {
         activeUsers.delete(state.userId);
@@ -183,34 +193,106 @@ export function attachLiveGateway(server: HttpServer) {
         };
         const apiKey = process.env.GEMINI_API_KEY?.trim();
         if (!apiKey) throw new Error("Falta GEMINI_API_KEY.");
-        upstream = new WebSocket(`${GOOGLE_WS}?key=${encodeURIComponent(apiKey)}`);
-        upstream.on("open", () => upstream?.send(JSON.stringify({
-          setup: {
-            model: `models/${MODEL}`,
-            generationConfig: {
-              responseModalities: ["AUDIO"],
-              translationConfig: {
-                targetLanguageCode: setup.targetLanguage,
-                echoTargetLanguage: false,
-              },
+        const sendAudio = (socket: WebSocket, audio: Buffer) => socket.send(JSON.stringify({
+          realtimeInput: {
+            audio: {
+              data: audio.toString("base64"),
+              mimeType: "audio/pcm;rate=16000",
             },
-            inputAudioTranscription: {},
-            outputAudioTranscription: {},
           },
-        })));
-        upstream.on("message", data => {
-          try {
-            const message = JSON.parse(data.toString());
-            if (state) captureMessage(message, state);
-            if (message.setupComplete) sendJson(client, { type: "ready", model: MODEL });
-            if (message.error) sendJson(client, { type: "error", message: message.error.message || "Gemini rechazó la sesión Live." });
-            sendJson(client, { type: "gemini", message });
-          } catch (error) {
-            console.error("Invalid Gemini Live message", error);
-          }
-        });
-        upstream.on("error", error => sendJson(client, { type: "error", message: error.message }));
-        upstream.on("close", (code, reason) => { if (!closing) sendJson(client, { type: "error", message: `Gemini Live cerró la conexión (${code})${reason.length ? `: ${reason.toString()}` : "."}` }); void close(); });
+        }));
+
+        const connectUpstream = (handle?: string) => {
+          if (closing) return;
+          if (reconnectTimer) clearTimeout(reconnectTimer);
+          reconnectTimer = undefined;
+          const generation = ++upstreamGeneration;
+          const socket = new WebSocket(`${GOOGLE_WS}?key=${encodeURIComponent(apiKey)}`);
+          upstream = socket;
+          upstreamReady = false;
+          console.info("Opening Gemini Live connection", { generation, resumed: Boolean(handle), attempt: reconnectAttempts });
+
+          socket.on("open", () => socket.send(JSON.stringify({
+            setup: {
+              model: `models/${MODEL}`,
+              generationConfig: {
+                responseModalities: ["AUDIO"],
+                translationConfig: {
+                  targetLanguageCode: setup.targetLanguage,
+                  echoTargetLanguage: false,
+                },
+              },
+              inputAudioTranscription: {},
+              outputAudioTranscription: {},
+              contextWindowCompression: { slidingWindow: {} },
+              sessionResumption: handle ? { handle } : {},
+            },
+          })));
+
+          socket.on("message", data => {
+            if (generation !== upstreamGeneration || closing) return;
+            try {
+              const message = JSON.parse(data.toString());
+              if (state) captureMessage(message, state);
+              const update = message.sessionResumptionUpdate;
+              if (update?.resumable && typeof update.newHandle === "string") {
+                resumptionHandle = update.newHandle;
+              }
+              if (message.goAway) {
+                console.info("Gemini Live requested connection rotation", {
+                  generation,
+                  timeLeft: message.goAway.timeLeft,
+                  resumable: Boolean(resumptionHandle),
+                });
+                rotateUpstream("goAway");
+              }
+              if (message.setupComplete) {
+                reconnectAttempts = 0;
+                upstreamReady = true;
+                while (pendingAudio.length && socket.readyState === WebSocket.OPEN) {
+                  sendAudio(socket, pendingAudio.shift()!);
+                }
+                if (!clientReady) {
+                  clientReady = true;
+                  sendJson(client, { type: "ready", model: MODEL });
+                } else {
+                  sendJson(client, { type: "reconnected", model: MODEL });
+                }
+              }
+              if (message.error) sendJson(client, { type: "error", message: message.error.message || "Gemini rechazó la sesión Live." });
+              sendJson(client, { type: "gemini", message });
+            } catch (error) {
+              console.error("Invalid Gemini Live message", error);
+            }
+          });
+          socket.on("error", error => console.error("Gemini Live WebSocket error", { generation, message: error.message }));
+          socket.on("close", (code, reasonBuffer) => {
+            if (generation !== upstreamGeneration || closing) return;
+            upstreamReady = false;
+            const reason = reasonBuffer.toString();
+            console.warn("Gemini Live connection closed", { generation, code, reason, resumable: Boolean(resumptionHandle) });
+            const retryable = ![1002, 1003, 1007, 1008].includes(code);
+            if (retryable && reconnectAttempts < MAX_UPSTREAM_RECONNECTS) {
+              reconnectAttempts += 1;
+              const delay = Math.min(4_000, 250 * 2 ** (reconnectAttempts - 1));
+              sendJson(client, { type: "reconnecting", attempt: reconnectAttempts });
+              reconnectTimer = setTimeout(() => connectUpstream(resumptionHandle), delay);
+              return;
+            }
+            sendJson(client, { type: "error", message: `Gemini Live cerró la conexión (${code})${reason ? `: ${reason}` : "."}` });
+            void close();
+          });
+        };
+
+        const rotateUpstream = (cause: string) => {
+          if (closing) return;
+          const previous = upstream;
+          console.info("Rotating Gemini Live connection", { cause, resumable: Boolean(resumptionHandle) });
+          connectUpstream(resumptionHandle);
+          previous?.close(1000, "Rotating Gemini Live connection");
+        };
+
+        connectUpstream();
         sendJson(client, { type: "connected", model: MODEL });
         timer = setInterval(() => {
           if (!state) return;
@@ -221,15 +303,14 @@ export function attachLiveGateway(server: HttpServer) {
         }, 5_000);
 
         client.on("message", (audio, isBinary) => {
-          if (!isBinary || !upstream || upstream.readyState !== WebSocket.OPEN) return;
-          upstream.send(JSON.stringify({
-            realtimeInput: {
-              audio: {
-                data: Buffer.from(audio as Buffer).toString("base64"),
-                mimeType: "audio/pcm;rate=16000",
-              },
-            },
-          }));
+          if (!isBinary) return;
+          const chunk = Buffer.from(audio as Buffer);
+          if (upstreamReady && upstream?.readyState === WebSocket.OPEN) {
+            sendAudio(upstream, chunk);
+            return;
+          }
+          pendingAudio.push(chunk);
+          if (pendingAudio.length > MAX_BUFFERED_AUDIO_CHUNKS) pendingAudio.shift();
         });
       } catch (error) {
         sendJson(client, { type: "error", message: error instanceof Error ? error.message : "No se pudo iniciar Live." });
