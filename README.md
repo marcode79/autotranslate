@@ -13,6 +13,16 @@ Traductor en vivo multiusuario para reuniones, pestañas y otras fuentes captura
 
 El audio se procesa por fragmentos y no se almacena. Sólo se guardan la transcripción, traducción y métricas de uso.
 
+## Separación por participantes
+
+El modo **Traducir** solicita a Gemini turnos por voz y muestra etiquetas como **Participante 1** en el original y la traducción. Las etiquetas se guardan dentro del texto, por lo que se conservan al abrir el historial, copiar o descargar TXT, sin migraciones de base de datos. Las conversaciones antiguas mantienen su texto original.
+
+La detección es aproximada: cada fragmento se analiza por separado con contexto textual reciente, sin conservar muestras ni huellas de voz. No se garantiza que un participante conserve su número entre fragmentos, especialmente al volver después de una pausa. Si no hay suficiente evidencia, se muestra **Participante sin identificar**. Los cambios dentro de un fragmento dependen de la calidad del audio y del modelo. No se deducen nombres reales.
+
+El **Intérprete Live** conserva su flujo original de audio y texto continuo. No se agrega procesamiento paralelo ni espera para separar participantes, porque el servicio Live actual no entrega etiquetas de hablantes.
+
+Validación del procesamiento de turnos: después de `npm run build`, ejecuta `node --test backend/tests/speakerTurns.test.mjs`. Estas pruebas comprueban formato y compatibilidad; la precisión acústica requiere probar audio real con varias voces.
+
 ## Configuración de Supabase
 
 1. Crea un proyecto en Supabase.
