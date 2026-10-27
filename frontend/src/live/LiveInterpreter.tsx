@@ -60,10 +60,14 @@ export function LiveInterpreter({ token, api, onFinished }: Props) {
   const startedAt = useRef(0);
   const clock = useRef<number | null>(null);
   const copiedTimer = useRef<number | null>(null);
+  const captureGeneration = useRef(0);
 
   useEffect(() => {
     api("/api/live/config").then(result => setAvailable(Boolean(result.enabled))).catch(() => setAvailable(false));
+    const onPageHide = () => stop(false);
+    window.addEventListener("pagehide", onPageHide);
     return () => {
+      window.removeEventListener("pagehide", onPageHide);
       if (copiedTimer.current) clearTimeout(copiedTimer.current);
       stop(false);
     };
@@ -96,20 +100,31 @@ export function LiveInterpreter({ token, api, onFinished }: Props) {
 
   async function beginCapture(ws: WebSocket) {
     const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+    if (socket.current !== ws) {
+      stream.getTracks().forEach(track => track.stop());
+      return;
+    }
     if (!stream.getAudioTracks().length) {
       stream.getTracks().forEach(track => track.stop());
       throw new Error("La fuente seleccionada no comparte audio.");
     }
     display.current = stream;
     const context = new AudioContext();
+    audioContext.current = context;
     await context.audioWorklet.addModule("/live-pcm-worklet.js");
     await context.resume();
+    if (socket.current !== ws) return;
     const mix = context.createGain();
     context.createMediaStreamSource(new MediaStream(stream.getAudioTracks())).connect(mix);
     if (includeMic) {
-      microphone.current = await navigator.mediaDevices.getUserMedia({
+      const micStream = await navigator.mediaDevices.getUserMedia({
         audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
       });
+      if (socket.current !== ws) {
+        micStream.getTracks().forEach(track => track.stop());
+        return;
+      }
+      microphone.current = micStream;
       context.createMediaStreamSource(microphone.current).connect(mix);
     }
     const node = new AudioWorkletNode(context, "live-pcm-processor");
@@ -129,6 +144,7 @@ export function LiveInterpreter({ token, api, onFinished }: Props) {
   }
 
   async function start() {
+    const generation = ++captureGeneration.current;
     setError("");
     setTranscript("");
     setTranslation("");
@@ -139,6 +155,7 @@ export function LiveInterpreter({ token, api, onFinished }: Props) {
         method: "POST",
         body: JSON.stringify({ sourceLanguage: "auto", targetLanguage: target, translationMode: "live" }),
       });
+      if (captureGeneration.current !== generation) return;
       const ws = new WebSocket(socketUrl());
       socket.current = ws;
       ws.binaryType = "arraybuffer";
@@ -150,7 +167,16 @@ export function LiveInterpreter({ token, api, onFinished }: Props) {
       }));
       ws.onmessage = async event => {
         const data = JSON.parse(String(event.data));
-        if (data.type === "ready") await beginCapture(ws);
+        if (socket.current !== ws) return;
+        if (data.type === "ready") {
+          try {
+            await beginCapture(ws);
+          } catch (reason) {
+            if (socket.current !== ws) return;
+            setError(reason instanceof Error ? reason.message : "No se pudo capturar audio.");
+            stop();
+          }
+        }
         if (data.type === "gemini") handleGemini(data.message);
         if (data.type === "error") {
           setError(data.message || "La sesión Live se interrumpió.");
@@ -161,7 +187,7 @@ export function LiveInterpreter({ token, api, onFinished }: Props) {
         setError("No se pudo conectar con el intérprete Live.");
         stop();
       };
-      ws.onclose = () => setStatus("paused");
+      ws.onclose = () => { if (socket.current === ws) stop(); };
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "No se pudo iniciar el intérprete.");
       stop();
@@ -169,6 +195,7 @@ export function LiveInterpreter({ token, api, onFinished }: Props) {
   }
 
   function stop(refresh = true) {
+    captureGeneration.current += 1;
     if (clock.current) clearInterval(clock.current);
     clock.current = null;
     worklet.current?.disconnect();

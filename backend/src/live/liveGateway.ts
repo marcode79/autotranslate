@@ -143,6 +143,17 @@ export function attachLiveGateway(server: HttpServer) {
     let timer: NodeJS.Timeout | undefined;
     let reconnectTimer: NodeJS.Timeout | undefined;
     let closing = false;
+    let alive = true;
+    const heartbeat = setInterval(() => {
+      if (!alive) {
+        void close();
+        client.terminate();
+        return;
+      }
+      alive = false;
+      if (client.readyState === WebSocket.OPEN) client.ping();
+    }, 15_000);
+    client.on("pong", () => { alive = true; });
     let upstreamGeneration = 0;
     let reconnectAttempts = 0;
     let resumptionHandle: string | undefined;
@@ -153,6 +164,7 @@ export function attachLiveGateway(server: HttpServer) {
     const close = async () => {
       if (closing) return;
       closing = true;
+      clearInterval(heartbeat);
       if (timer) clearInterval(timer);
       if (reconnectTimer) clearTimeout(reconnectTimer);
       upstream?.close();
@@ -176,8 +188,21 @@ export function attachLiveGateway(server: HttpServer) {
           throw new Error("Configuración Live incompleta.");
         }
         const userId = await authorize(setup);
-        const initialReservation = await reserveUsage(userId, 30_000);
+        if (closing) return;
+        if (activeUsers.has(userId)) throw new Error("Ya tienes una sesión Live activa.");
         activeUsers.add(userId);
+        let initialReservation: Reservation;
+        try {
+          initialReservation = await reserveUsage(userId, 30_000);
+        } catch (error) {
+          activeUsers.delete(userId);
+          throw error;
+        }
+        if (closing) {
+          activeUsers.delete(userId);
+          await releaseUsage(userId, initialReservation);
+          return;
+        }
         state = {
           userId,
           conversationId: setup.conversationId,
